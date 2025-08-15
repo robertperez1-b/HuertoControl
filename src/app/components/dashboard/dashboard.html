@@ -1,0 +1,20 @@
+
+<div class="dashboard">
+  <app-header></app-header>
+  <main class="dashboard-content">
+    <section class="stats-section">
+      <div class="stat-card">
+        <h3>Total Plagas</h3>
+        <p>{{ totalPlagas }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Cultivo Más Afectado</h3>
+        <p>{{ cultivoMasAfectado }}</p>
+      </div>
+    </section>
+    
+    <section class="actions-section">
+      <button routerLink="/plagas/registro" class="action-button">Nueva Plaga</button>
+    </section>
+  </main>
+</div>

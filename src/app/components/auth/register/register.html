@@ -1,0 +1,40 @@
+<div class="form-container">
+  <h2 class="form-title">Registrar Nueva Plaga</h2>
+  <form [formGroup]="plagaForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label>Nombre de la Plaga</label>
+      <input formControlName="nombre" class="form-control">
+    </div>
+    
+    <div class="form-group">
+      <label>Cultivo Afectado</label>
+      <select formControlName="cultivo" class="form-control">
+        <option value="tomate">Tomate</option>
+        <option value="lechuga">Lechuga</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Intensidad (1-5)</label>
+      <input 
+        type="range" 
+        formControlName="intensidad" 
+        min="1" 
+        max="5" 
+        class="form-range"
+      >
+      <span>{{ plagaForm.value.intensidad }}</span>
+    </div>
+
+    <div class="form-group">
+      <label>Imagen</label>
+      <input 
+        type="file" 
+        (change)="onFileChange($event)" 
+        class="form-control"
+      >
+    </div>
+
+    <button type="submit" class="submit-button">Guardar</button>
+  </form>
+</div>
