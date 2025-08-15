@@ -1,37 +1,42 @@
 import { Component, OnInit } from '@angular/core';
-import { PlagaService } from '../../services/plaga.service';
+import { CommonModule } from '@angular/common';
+import { PlagaService } from '../../../services/plagas.service'; 
+
 
 @Component({
   selector: 'app-historial',
-  templateUrl: './historial.component.html'
+  imports: [CommonModule],
+  templateUrl: './historial.html'
 })
 export class HistorialComponent implements OnInit {
   plagas: any[] = [];
-  loading = true;
+  loading = false;
 
-  constructor(private plagaService: PlagaService) {}
+  constructor(private plagaService: PlagaService) {} // 👈 ahora sí debería compilar
 
   ngOnInit() {
     this.cargarPlagas();
   }
 
   cargarPlagas() {
+    this.loading = true;
     this.plagaService.obtenerPlagas().subscribe({
       next: (data) => {
         this.plagas = data;
         this.loading = false;
       },
       error: (err) => {
-        console.error(err);
+        console.error('Error al cargar plagas', err);
         this.loading = false;
       }
     });
   }
 
   eliminarPlaga(id: string) {
-    if (confirm('¿Eliminar este registro?')) {
-      this.plagaService.eliminarPlaga(id).subscribe(() => {
-        this.cargarPlagas();
+    if (confirm('¿Seguro que deseas eliminar esta plaga?')) {
+      this.plagaService.eliminarPlaga(id).subscribe({
+        next: () => this.cargarPlagas(),
+        error: (err) => console.error('Error al eliminar', err)
       });
     }
   }

@@ -1,20 +1,26 @@
+<div class="dashboard-container">
+  <h2>Estadísticas de Plagas</h2>
 
-<div class="dashboard">
-  <app-header></app-header>
-  <main class="dashboard-content">
-    <section class="stats-section">
-      <div class="stat-card">
-        <h3>Total Plagas</h3>
-        <p>{{ totalPlagas }}</p>
-      </div>
-      <div class="stat-card">
-        <h3>Cultivo Más Afectado</h3>
-        <p>{{ cultivoMasAfectado }}</p>
-      </div>
-    </section>
-    
-    <section class="actions-section">
-      <button routerLink="/plagas/registro" class="action-button">Nueva Plaga</button>
-    </section>
-  </main>
+  <!-- Mostrar mientras carga -->
+  <div *ngIf="!stats || stats.totalPlagas === 0" class="loading">
+    Cargando estadísticas...
+  </div>
+
+  <!-- Mostrar estadísticas -->
+  <div *ngIf="stats && stats.totalPlagas > 0" class="stats-grid">
+    <div class="stat-card">
+      <h3>Total de Plagas</h3>
+      <p>{{ stats.totalPlagas }}</p>
+    </div>
+
+    <div class="stat-card">
+      <h3>Plagas Activas</h3>
+      <p>{{ stats.plagasActivas }}</p>
+    </div>
+
+    <div class="stat-card">
+      <h3>Cultivo más afectado</h3>
+      <p>{{ stats.cultivoMasAfectado }}</p>
+    </div>
+  </div>
 </div>

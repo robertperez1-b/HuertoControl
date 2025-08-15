@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { PlagaService } from '../../services/plaga.service';
+import { CommonModule } from '@angular/common';
+import { PlagaService } from '../../services/plagas.service';
 
 @Component({
   selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html'
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './dashboard.html'
 })
 export class DashboardComponent implements OnInit {
   stats = {

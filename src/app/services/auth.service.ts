@@ -1,23 +1,36 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = 'http://localhost:5000/api/auth';
-  private _isLoggedIn = new BehaviorSubject<boolean>(false);
+  private apiUrl = '/api/auth'; // usando proxy Angular → backend
 
   constructor(private http: HttpClient) {}
 
-  login(username: string, password: string) {
-    return this.http.post(`${this.apiUrl}/login`, { username, password });
+  login(username: string, password: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/login`, { username, password })
+      .pipe(tap((res: any) => {
+        if (res.token) {
+          localStorage.setItem('token', res.token);
+        }
+      }));
   }
 
-  register(username: string, password: string) {
-    return this.http.post(`${this.apiUrl}/register`, { username, password });
+  register(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register`, data);
   }
 
-  get isLoggedIn() {
-    return this._isLoggedIn.asObservable();
+  logout() {
+    localStorage.removeItem('token');
   }
+
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+  
+  isLoggedIn(): boolean {
+  return !!localStorage.getItem('token');
+}
+
 }
