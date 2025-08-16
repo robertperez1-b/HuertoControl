@@ -1,45 +1,44 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.html',
-  styleUrls: ['./login.scss']
+  styleUrls: ['../styles/auth.scss'] 
 })
 export class LoginComponent {
-  username = '';
-  password = '';
+  loginForm: FormGroup;
   loading = false;
   errorMessage = '';
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
+    this.loginForm = this.fb.group({
+      username: ['', Validators.required],
+      password: ['', Validators.required]
+    });
+  }
 
-  onLogin() {
-    if (!this.username || !this.password) {
-      this.errorMessage = 'Por favor, complete todos los campos';
-      return;
-    }
+  onSubmit() {
+    if (this.loginForm.invalid) return;
+
     this.loading = true;
     this.errorMessage = '';
-    this.authService.login(this.username, this.password).subscribe({
-      next: (response: any) => {
-        localStorage.setItem('token', response.token);
+
+    this.auth.login(this.loginForm.value).subscribe({
+      next: (res) => {
+        this.loading = false;
+        this.auth.saveToken(res.token);
+        alert('Login exitoso');
         this.router.navigate(['/dashboard']);
       },
-      error: (error) => {
-        this.errorMessage = error.error?.message || 'Error al iniciar sesión';
+      error: (err) => {
         this.loading = false;
-      },
-      complete: () => {
-        this.loading = false;
+        this.errorMessage = err.error?.error || 'Error al iniciar sesión';
       }
     });
   }

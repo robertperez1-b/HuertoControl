@@ -1,41 +1,48 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-
+import { Router } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
+import {  ViewEncapsulation } from '@angular/core';
 
 
 @Component({
   selector: 'app-register',
   standalone: true,
+  encapsulation: ViewEncapsulation.None,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './register.html',
-  styleUrls: ['./register.scss']
+  styleUrls: ['../styles/auth.scss']  
 })
 export class RegisterComponent {
-  plagaForm: FormGroup;
+  registerForm: FormGroup;
+  loading = false;
+  errorMessage = '';
 
-  constructor(private fb: FormBuilder) {
-    this.plagaForm = this.fb.group({
-      nombre: ['', Validators.required],
-      cultivo: ['tomate', Validators.required],
-      intensidad: [1, [Validators.required, Validators.min(1), Validators.max(5)]],
-      imagen: [null]
+  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
+    this.registerForm = this.fb.group({
+      username: ['', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
-  onFileChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input?.files?.length) {
-      this.plagaForm.patchValue({ imagen: input.files[0] });
-    }
-  }
-
   onSubmit() {
-    if (this.plagaForm.valid) {
-      console.log('Datos de plaga:', this.plagaForm.value);
-      // Aquí iría la llamada al servicio que guarda la plaga en tu backend
-    } else {
-      console.log('Formulario inválido');
-    }
+    if (this.registerForm.invalid) return;
+
+    this.loading = true;
+    this.errorMessage = '';
+
+    this.auth.register(this.registerForm.value).subscribe({
+      next: (res) => {
+        this.loading = false;
+        this.auth.saveToken(res.token);
+        alert('Registro exitoso');
+        this.router.navigate(['/dashboard']);
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorMessage = err.error?.error || 'Error al registrar usuario';
+      }
+    });
   }
 }
