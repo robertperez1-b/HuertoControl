@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs'); // Importar modelo de usuario
 const User = require('../models/User');
 
+
 // Login
 exports.login = async (req, res) => {
   const { username, password } = req.body;

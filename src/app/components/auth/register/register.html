@@ -15,8 +15,9 @@
     <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
 
     <button type="submit" [disabled]="loading || registerForm.invalid">
-      {{ loading ? 'Registrando...' : 'Registrarse' }}
-    </button>
+  {{ loading ? 'Registrando...' : 'Registrarse' }}
+</button>
+
   </form>
 
   <p class="alt-action">

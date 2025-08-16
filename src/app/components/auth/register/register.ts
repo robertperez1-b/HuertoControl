@@ -1,25 +1,22 @@
 import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
-import {  ViewEncapsulation } from '@angular/core';
-
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  encapsulation: ViewEncapsulation.None,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './register.html',
-  styleUrls: ['../styles/auth.scss']  
+  styleUrls: ['../styles/auth.scss'] 
 })
 export class RegisterComponent {
   registerForm: FormGroup;
   loading = false;
   errorMessage = '';
 
-  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
+  constructor(private fb: FormBuilder, private authService: AuthService) {
     this.registerForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]]
@@ -30,18 +27,16 @@ export class RegisterComponent {
     if (this.registerForm.invalid) return;
 
     this.loading = true;
-    this.errorMessage = '';
+    const { username, password } = this.registerForm.value;
 
-    this.auth.register(this.registerForm.value).subscribe({
-      next: (res) => {
+    this.authService.register({ username, password }).subscribe({
+      next: () => {
         this.loading = false;
-        this.auth.saveToken(res.token);
-        alert('Registro exitoso');
-        this.router.navigate(['/dashboard']);
+        alert('✅ Usuario registrado correctamente');
       },
       error: (err) => {
         this.loading = false;
-        this.errorMessage = err.error?.error || 'Error al registrar usuario';
+        this.errorMessage = err.error?.error || '❌ Error en el registro';
       }
     });
   }
